@@ -1,8 +1,8 @@
-# Title: Yes Using R on in Noteable
+# Title: Using R on in Noteable
 # Author details: Author: Mairead Bermingham, Contact details: mairead.bermingham@ed.ac.uk
 # Script and data info: This script provides an example of using R as a calculator, and to collect BMI data entered at the console, and finally saveing the data as a csv file. 
 # Data consists of numerical data.
-# Data was collected was inputted on the 21 May 2022. 
+# Data was collected was inputted on the 21/20 May 2022. 
 # Copyright statement: This script is the product of University of Edinburgh.
 
 #Here is an example of using R as a calculator to perform a numerical operation. 
