@@ -1,0 +1,52 @@
+---
+title: "MyFirstRMarkdownDocument"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+[Link to my git hub repository](https://github.com/B199291/B199291_Assessment)
+
+#Data Dictionary for test data
+##Liner
+##appending the data dictionary to my data
+#Loading NHSdataset
+##Data
+##Uploading the data
+##Viewing the data
+##Subsetting the data
+#Data Capture Tool
+##Variables
+#Consent
+#Indexing
+
+#R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Load packages and data
+Let’s load the packages and data needed for this script.
+
+```{r a,message = FALSE, warning = FALSE}
+library(NHSRdatasets)
+library(tidyverse)
+```
+![Illustration by [Allison Horst](https://github.com/allisonhorst)](../Figures/Images/tidyverse.jpg){width=50%}
