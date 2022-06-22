@@ -41,7 +41,7 @@
 #These datasets have been synthetically generated. (Chris Mainey, 2021)   
 
 ## Load packages and data
-Let’s load the packages and data needed for this script.
+#Let’s load the packages and data needed for this script.
 library(NHSRdatasets)
 library(tidyverse)
 #The tidyverse is a collection of R packages designed for data science introduced by Hadley Wickham and his team 

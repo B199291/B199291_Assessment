@@ -2,7 +2,9 @@
 title: "MyFirstRMarkdownDocument"
 author: "B199291"
 date: "20/06/2022"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -14,10 +16,16 @@ knitr::opts_chunk$set(echo = TRUE)
 #Data Dictionary for test data
 ##Liner
 ##appending the data dictionary to my data
-#Loading NHSdataset
+#Loading 
+Here I am loading NHSRdatasets and other needed packages
 ```{r a,message = FALSE, warning = FALSE}
 library(NHSRdatasets)
 library(tidyverse)
+library(here)
+library(knitr)
+library(scales)
+library(lubridate)
+library(caret)
 ```
 
 ##Data
