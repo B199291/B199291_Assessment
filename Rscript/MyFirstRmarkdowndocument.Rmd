@@ -181,7 +181,7 @@ ae %>%
 We will use the *here* package to build a path relative to the top-level directory to write the raw ae_attendances data to your 'RawData' folder. The goal of the *here* package is to enable easy file referencing in project-oriented workflows. In contrast to using `setwd()` function, which is fragile and dependent on the way you organise your files, here uses the top-level directory of a project to easily build paths to files.
 ![Illustration by [Allison Horst](https://github.com/allisonhorst)](../Figures/Images/here.png){width=50%}
 ```{r q,message = FALSE, warning = FALSE}
-write_csv(ae, here("RawData", "ae_attendances.csv"))
+write_csv(ae, here("RefData", "ae_attendances.csv"))
 ```
 
 
