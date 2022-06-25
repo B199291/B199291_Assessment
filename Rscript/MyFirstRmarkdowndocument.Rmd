@@ -10,129 +10,41 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
+#Loading NHSRdatasets and required packages.
 ```{r a,message = FALSE, warning = FALSE}
 library(NHSRdatasets)
 library(tidyverse)
 library(here)
 library(knitr)
 library(scales)
-```
-
-```{r c,message = FALSE, warning = FALSE}
-library(knitr)
-```
-*knitr* is an R package that integrates code into text documents. Files can then be processed into a diverse array of document formats including pdfs, Word documents, etc.
-
-```{r d,message = FALSE, warning = FALSE}
-library(scales)
-```
-The *scales* packages provides the internal scaling infrastructure to *ggplot2* and its functions allow programmers to customise the transformations, breaks, guides and palettes used in visualisations. *ggplot2* is a powerful package to draw graphics. It implements the grammar of graphics (and hence its name). *ggplot2* is included in, and loaded with the *tidyverse* package
-```{r e,message = FALSE, warning = FALSE}
 library(lubridate)
-```
-
-*lubridate* provides tools that make it easier to manipulate dates in R. *lubridate* is part of Hadley's tidyverse ecosystem but is not loaded by the *tidyverse* package, which includes only what he thought were the core components. If you are going to be doing a lot of date manipulations, you need to load it separately. 
-
-```{r f,message = FALSE, warning = FALSE}
 library(caret)
 ```
-The *caret* package (short for Classification And REgression Training) is a set of functions that attempt to streamline the process for creating predictive models. The package contains tools for data splitting, pre-processing, feature selection, model tuning using resampling, variable importance estimation amongst others.
 
-# **NHSRdatasets**
-Here is the code to load the five NHSRdatasets from the *NHSRdatasets* R package.
-```{r g,message = FALSE, warning = FALSE}
+#Loading ae_attendances Dataset
+```{r b,message = FALSE, warning = FALSE}
 #Load the ae_attendances data.
 data(ae_attendances)
-#Load the LOS_model data.
-data(LOS_model)
-#Load the ons_mortality data.
-data(ons_mortality)
-#Load the stranded_data.
-data(stranded_data)
-#Load the synthetic_news_data.
-data(synthetic_news_data)
 ```
 
-
-# **NHS England accident and emergency attendances and admissions (ae_attendances) data** 
-
-In this course, we will be focus on the NHS England accident and emergency attendances and admissions (ae_attendances) data. If you are new to programming, I recommend using this data, as the data has been tidied to be easily usable within the tidyverse of packages. However, if you would like to stretch yourself for the course assignment, I recommend you can choose from one of the other four datasets contained within the *NHSRdatasets* package to manage on this course. You will not gain additional marks, but it will significantly enhance your learning on the course.
 
 ## Let’s have a look at the ae_attendances data
-```{r h,message = FALSE, warning = FALSE}
-data(ae_attendances)
+```{r c,message = FALSE, warning = FALSE}
 ae<-ae_attendances
 class(ae)
+glimpse(ae)
 ```
-The tbl_df class is a subclass of data.frame. A data.frame is a table or a two-dimensional array-like structure in which each column contains values of one variable and each row contains one set of values from each column.  The colloquial term "tibble" refers to a data frame that has the tbl_df class. Objects of class tbl_df have a class attribute of c("tbl_df", "tbl", "data.frame"). Tibble is the central data structure for the set of packages known as the tidyverse. It’s best to think of tibbles as an updated and stylish version of the data.frame that exhibit some special behaviour, such as enhanced printing.
-```{r i,message = FALSE, warning = FALSE}
-ae
-```
-An overview of your data is returned when a tibble is printed to the RStudio console. You can see the ae_attendances tibble consists of 12,765 rows of data and six columns with different classes. You have one date variable, period, two character variables (or factors), org_code and type, and three numeric (double precision) variables, attendances, breaches and admissions. A factor is a variable used to categorise and store the data, having a limited number of different values. Factors are an important class for exploratory data analysis, visualisation, and statistical analysis with R.
+I looked the ae_attedances data review and its class using class function and glimpse function from tidyverse. The data frame has 12,765 rows of data and six columns of different variables with different classes. I can see period (date variable), org_code and type (factor variable), attendances, breaches and admissions as numerice(double precision)variables. As per my intention, I will use type(factor) variable to subset into new data set.
 
-The dataset contains:     
-
-* **period:** the month that this activity relates to, stored as a date (1st of each month).  
-
-*	**org_code:** the Organisation data service (ODS) code for the organisation. The ODS code is a unique code created by the Organisation data service within [NHS Digital](_https://www.digitalsocialcare.co.uk/latest-guidance/how-to-find-your-ods-code/), and used to identify organisations across health and social care. ODS codes are required in order to gain access to national systems like NHSmail and the Data Security and Protection Toolkit. If you want to know the organisation associated with a particular ODS code, you can look it up from the following address: <https://odsportal.digital.nhs.uk/Organisation/Search>. For example, the organisation associated with the ODS code 'AF003' is
-[Parkway health centre](https://odsportal.digital.nhs.uk/Organisation/OrganisationDetails?organisationId=132839&showOpenChildredOnly=True).      
-
-*	**type:** the Department Type for this activity, either  
-    + **1:** Emergency departments are a consultant led 24 hour service with full resuscitation facilities and designated accommodation for the reception of accident and emergency patients,  
-    + **2:** Consultant led mono specialty accident and emergency service (e.g. ophthalmology, dental) with designated accommodation for the reception of patients, or  
-    + **other:** Other type of A&E/minor injury activity with designated accommodation for the reception of accident and emergency patients. The department may be doctor led or nurse led and treats at least minor injuries and illnesses and can be routinely accessed without appointment. A service mainly or entirely appointment based (for example a GP Practice or Out-patient clinic) is excluded even though it may treat a number of patients with minor illness or injury. Excludes NHS walk-in centres.[(National Health Service, 2020)](https://eu01.alma.exlibrisgroup.com/leganto/public/44UOE_INST/citation/37459630310002466?auth=SAML) 
-   
-* **attendances:** the number of attendances for this department type at this organisation for this month.    
-
-*	**breaches:** the number of attendances that breached the four hour target.   
-
-*	**admissions:** the number of attendances that resulted in an admission to the hospital.[(Chris Mainey, 2021)](https://eu01.alma.exlibrisgroup.com/leganto/public/44UOE_INST/citation/37444097490002466?auth=SAML)
-
-
-
-## Let's view at the ae_attendances data
-The `glimpse()` function is from *tibble* package and is great to view the columns/variables in a data frame. It also shows data type and some of the data in the data frame in each row. The *tibble* package provides utilities for handling tibbles. The *tibble* package is loaded by the *tidyverse* package, as one of its core components. 
-```{r j,message = FALSE, warning = FALSE}
-glimpse(ae) 
-```
-Here is the output of the `glimpse()' function. It starts off with the number of rows and columns and each column in separate rows.
-
-The `head()` function let's you get a look at top n rows of a data frame. By default it shows the first 6 rows in a data frame.
-```{r k,message = FALSE, warning = FALSE}
-head(ae)
-```
-We can specify the number of rows we want to see in a data frame with the argument “n”. 
-```{r l,message = FALSE, warning = FALSE}
-head(ae, n=3)
-```
-In the example above, we used n=3 to look at the first three rows of the ae_attendances data frame.
-
-The function `tail()` is the counterpart to `head()`. tail() let's you to take a look at the bottom n rows of a data frame. We can adjust the number of rows with the argument “n” as with the `head()` function.
-```{r m,message = FALSE, warning = FALSE}
-tail(ae, n=4)
-```
-In the example above, we used n=4 to look at the last four rows of the ae_attendances data frame.
-
-
-## Missing data
-
-It is common when collecting data for some entries to be missing, which can significantly impact any attempt to gain useful insight from data. Methods have been developed to handle missing data. The simplest of these is to discard any record which contains a missing entry. However, this can lead to such a small sample that it is not useful for obtaining reliable information. In addition to this, there may be reasons why certain demographic groups do not want to supply particular information, reducing the representativeness of the selected sample. We therefore need to check for missing data in the ae_attendances data.   
-
-![Missing data (source: [Matt Randall, 2020](https://eu01.alma.exlibrisgroup.com/leganto/public/44UOE_INST/citation/37458588680002466?auth=SAML))](../Figures/Images/MissingData.jpg){width=50%}
-
-'map()' is a function from the *purr* package for applying a function to each element of a list. The *purr* package enhances R’s functional programming  toolkit by providing a complete and consistent set of tools for working with functions and vectors. The 'is.na' function produces a matrix, consisting of logical values (i.e. TRUE or FALSE), whereby TRUE indicates a missing value. 
+## Missing data checking
 ```{r n,message = FALSE, warning = FALSE}
-# Calculate how many NAs there are in each variable
 ae %>% 
   map(is.na) %>%
 map(sum)
 ```
-The data is complete. We do not need to worry about handling missing data. If you decide use another NHSRdataset it may not be as ‘tidy’ as the ae_attendances data.
-
-
+Just to make sure that there is no missing data in the table and the data is complete.
 ## Let's add an index link column to ae_attendances data  
-Separating data into training and testing sets is vital for evaluating data collection and analysis tools. Typically, when you divide a data set into a training set and a testing set, most of the data is used for training, and a smaller portion of the data is used for testing. To develop and evaluate your data capture tool, you will need to split the raw data into training and testing sets. We, therefore, need to add an index column to the raw data so we can link the partitioned data sets to the raw data if required in the future. We will use the `rowid_to_column()` function to convert row identities to a column named index.
+For DCT development and training and testing dataset separation, i will add index ref column.
 ```{r o,message = FALSE, warning = FALSE}
 ae <- rowid_to_column(ae, "index")
 ```
