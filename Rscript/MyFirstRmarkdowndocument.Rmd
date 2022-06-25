@@ -37,16 +37,21 @@ glimpse(ae)
 I looked the ae_attedances data review and its class using class function and glimpse function from tidyverse. The data frame has 12,765 rows of data and six columns of different variables with different classes. I can see period (date variable), org_code and type (factor variable), attendances, breaches and admissions as numerice(double precision)variables. As per my intention, I will use type(factor) variable to subset into new data set.
 
 ## Missing data checking
-```{r n,message = FALSE, warning = FALSE}
+```{r d,message = FALSE, warning = FALSE}
 ae %>% 
   map(is.na) %>%
 map(sum)
 ```
 Just to make sure that there is no missing data in the table and the data is complete.
+
 ## Let's add an index link column to ae_attendances data  
 For DCT development and training and testing dataset separation, i will add index ref column.
-```{r o,message = FALSE, warning = FALSE}
-ae <- rowid_to_column(ae, "index")
+```{r e,message = FALSE, warning = FALSE}
+ae <- rowid_to_column(ae, "Index")
+```
+## Let's subset my raw data first
+```{r f,message = FALSE, warning = FALSE}
+
 ```
 
 ## Let's tablulate the raw data for your report
