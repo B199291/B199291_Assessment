@@ -19,6 +19,7 @@ library(knitr)
 library(scales)
 library(lubridate)
 library(caret)
+library(ggplot2)
 ```
 
 #Loading ae_attendances Dataset
@@ -65,7 +66,7 @@ ae_type1 %>%
   mutate_at(vars(attendances, breaches, admissions), comma) %>%
   head(10) %>%
   kable()
-write_csv(ae_type1, here("RefData", "ae_type1.csv"))
+write_csv(ae_type1, here("WorkingData", "ae_type1.csv"))
 ```
 
 ## Getting Total Attendances of all Type 1 hopsitals
@@ -75,60 +76,43 @@ Type1_attendances <- ae_type1 %>%
   summarise_at(vars(attendances, breaches), sum)
 glimpse(Type1_attendances)
 ```
-## Getting Top 10 hospitals with most attendances and saving for record
+## Getting Type1 hospitals with attendances in descending order and saving for record
 ```{r i,message = FALSE, warning = FALSE}
-Type1_att_ascending <-Type1_attendances[order(-Type1_attendances$attendances),]
-glimpse(Type1_att_ascending)
-write_csv(Type1_att_ascending, here("RefData", "Type1_attendances_ascending.csv"))
+Type1_att_descending <-Type1_attendances[order(-Type1_attendances$attendances),]
+glimpse(Type1_att_descending)
+write_csv(Type1_att_descending, here("WorkingData", "Type1_attendances_descending.csv"))
 ```
 ## Subsetting new df with top 10 hospitals
-
 ```{r j,message = FALSE, warning = FALSE}
-ae<-ae %>% select(Index, period, attendances, breaches)
+Top5_attendance <- head(Type1_att_ascending,5)
+write_csv(Top5_attendance, here("WorkingData", "Top5_attendance.csv"))
 ```
-### Let's tabulate the subsetted ae_attendances data
-```{r s,message = FALSE, warning = FALSE}
-ae %>%
-  # set the period column to show in Month-Year format
-  mutate_at(vars(period), format, "%b-%y") %>% 
-  # set the numeric columns to have a comma at the 1000's place
+### Tabulating Top 5 most admitted hospitals
+```{r k,message = FALSE, warning = FALSE}
+Top5_attendance %>%
   mutate_at(vars(attendances, breaches), comma) %>%
-  # show the first 10 rows
-  head(10) %>%
-  # format as a table
   kable()
 ```
-
-
-# Let's calculate monthly four hour waiting time target performance for England as a whole
-We will now use the *dplyr* package `summarise_at()` function to get the `sum` of all attendances and breaches for England as a whole.
-```{r t,message = FALSE, warning = FALSE}
-ENG_performance <- ae %>%
-  group_by(period) %>%
-  summarise_at(vars(attendances, breaches), sum) %>%
-  mutate(performance = 1 - breaches / attendances)
-glimpse(ENG_performance)
+### Creating new dataset of top 5 hospitals for creating visual
+```{r l,message = FALSE, warning = FALSE}
+Top5_visualready <- filter(ae_type1, org_code %in% Top5_attendance$org_code)
+Top5_visualready$performance <- 1-(Top5_visualready$breaches/Top5_visualready$attendances)
+glimpse(Top5_visualready)
+write_csv(Top5_visualready, here("WorkingData", "Top5_visualready.csv"))
 ```
-
-### Let's visualise monthly four hour waiting time target performance before we save or raw data file.
-*ggplot2* is a powerful package to draw graphics. It implements the grammar of graphics (and hence its name). The *ggplot2* package is loaded by the *tidyverse* package, as one of its core components. The `ggplot()` function initialises a *ggplot* object. We will use the `geom_line()` to connect and geom_point() to represent the percentage of accident and emergency attendances that met the four hour standard (`y`), ordered by month of attendance(`x`). We will use the `labs()` function to add the `x` and `y` labels, plot title and caption.
-```{r u,message = FALSE, warning = FALSE}
-ggplot(ENG_performance, aes(period, performance)) +
-  geom_line(color = "darkcyan") +
-  geom_point(color = "darkcyan") +
-  scale_y_continuous(labels = percent) +
+### Visualising Top 10 hospital breach percentage by time
+```{r m,message = FALSE, warning = FALSE}
+ggplot(Top5_visualready, aes(x=period, y=performance, group=org_code, colour=org_code)) +  
+  geom_line (size=0.75) + scale_y_continuous(labels = percent) + 
   scale_x_date(date_labels = "%b-%y", date_breaks = "11 month")+
   labs(x = "Month of attendance",
-       y = "% of A&E attendances that met the four hour standard",
-       title = "NHS England accident and emergency (A&E) four hour performance",
-       caption = "Source: NHSRdatasets")
+       y = "% of A&E attendances that met 4 hour standard in Top 5 visited 
+       hospitals",
+       title = "NHS England accident and emergency (A&E) four hour performance in Top 5 
+       visited hospitals",
+       caption = "Source: NHSRdatasets")+
+  theme(plot.title = element_text(hjust = 0.5))
 ```
-
-The National Health Service (NHS) is always under considerable pressure over the winter period as demand for services tends to increase significantly with the onset of cold weather and flu.([ NHS Providers, 2022](https://eu01.alma.exlibrisgroup.com/leganto/public/44UOE_INST/citation/37470286210002466?auth=SAML)) You can clearly see that under the winter pressures  where four hour waiting time target performance drops.
-
-
-## Let's select the ae_attendances data subset for further exploratory analysis
-Based on this brief probe of the of the ae_attendances data, we have decide we wish to explore this data further for the development and evaluation your data capture tool. 
 
 ### Let's tabulate the subsetted ae_attendances data for your report
 ```{r v,message = FALSE, warning = FALSE}
