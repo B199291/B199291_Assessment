@@ -48,46 +48,43 @@ Just to make sure that there is no missing data in the table and the data is com
 For DCT development and training and testing dataset separation, i will add index ref column.
 ```{r e,message = FALSE, warning = FALSE}
 ae <- rowid_to_column(ae, "Index")
-```
-## Let's subset my raw data first
-```{r f,message = FALSE, warning = FALSE}
-
-```
-
-## Let's tablulate the raw data for your report
-The pipe operator denoted by symbol `%>%` is a special operational function available which allows us to pass the result of one function/argument to the other one in sequence.
-The the *dplyr* package `mutate_at()` function edits specific columns with a character vector or 'vars()' argument generates a list of columns. The function `comma()` from the *scales* package is useful for presenting numbers using commas to separate the thousands. This is always a good idea as it assists the reader in quickly determining the magnitude of the numbers we are looking at. As a matter of course, I recommend commas in plots (and tables) at all times. 
-```{r p,message = FALSE, warning = FALSE}
-ae %>%
-  # Set the period column to show in month-year format
-  mutate_at(vars(period), format, "%b-%y") %>% 
-  # Set the numeric columns to have a comma at the 1000's place
-  mutate_at(vars(attendances, breaches, admissions), comma) %>%
-  # Show the first 10 rows
-  head(10) %>%
-  # Format as a table
-  kable()
-```
-
-## Let's save the raw ae_attendances data to your 'RawData' folder
-We will use the *here* package to build a path relative to the top-level directory to write the raw ae_attendances data to your 'RawData' folder. The goal of the *here* package is to enable easy file referencing in project-oriented workflows. In contrast to using `setwd()` function, which is fragile and dependent on the way you organise your files, here uses the top-level directory of a project to easily build paths to files.
-![Illustration by [Allison Horst](https://github.com/allisonhorst)](../Figures/Images/here.png){width=50%}
-```{r q,message = FALSE, warning = FALSE}
+glimpse(ae)
 write_csv(ae, here("RefData", "ae_attendances.csv"))
 ```
+## Let's subset my raw data first into type 1 org only data
+```{r f,message = FALSE, warning = FALSE}
+ae_type1 <- subset(ae,type=='1')
+unique(ae_type1$type)
+unique(ae_type1$org_code)
+```
 
+## Let's tablulate Type1 hospital data and save for my reference
+```{r g,message = FALSE, warning = FALSE}
+ae_type1 %>%
+  mutate_at(vars(period), format, "%b-%y") %>% 
+  mutate_at(vars(attendances, breaches, admissions), comma) %>%
+  head(10) %>%
+  kable()
+write_csv(ae_type1, here("RefData", "ae_type1.csv"))
+```
 
+## Getting Total Attendances of all Type 1 hopsitals
+```{r h,message = FALSE, warning = FALSE}
+Type1_attendances <- ae_type1 %>%
+  group_by(org_code) %>%
+  summarise_at(vars(attendances, breaches), sum)
+glimpse(Type1_attendances)
+```
+## Getting Top 10 hospitals with most attendances and saving for record
+```{r i,message = FALSE, warning = FALSE}
+Type1_att_ascending <-Type1_attendances[order(-Type1_attendances$attendances),]
+glimpse(Type1_att_ascending)
+write_csv(Type1_att_ascending, here("RefData", "Type1_attendances_ascending.csv"))
+```
+## Subsetting new df with top 10 hospitals
 
-
-# **Selecting variables for your data capture tool**
-It really important point to note, is that you are not going to need the full ae_attendances dataset develop your data collection tool. For example if you are interested in exploring four hours performance for England as a whole you will only need the variables: index, period, attendances, breaches. Likewise, you may wish examine performance for the different types of department, we would also need the type variable. For the purpose of this lesson, we will focus on  England as a whole.
-
-## Examining the four-hour waiting time target performance for England
-
-We will now use the *dplyr* package `select()` function to select the required variables. The *dplyr* package is loaded by the *tidyverse* package, as one of its core components. dplyr provides a grammar of data manipulation, providing a consistent set of verbs that solve the most common data manipulation challenges.
-
-```{r r,message = FALSE, warning = FALSE}
-ae<-ae %>% select(index, period, attendances, breaches)
+```{r j,message = FALSE, warning = FALSE}
+ae<-ae %>% select(Index, period, attendances, breaches)
 ```
 ### Let's tabulate the subsetted ae_attendances data
 ```{r s,message = FALSE, warning = FALSE}

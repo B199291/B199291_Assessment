@@ -1,4 +1,4 @@
-index,period,org_code,type,attendances,breaches,admissions
+Index,period,org_code,type,attendances,breaches,admissions
 1,2017-03-01,RF4,1,21289,2879,5060
 2,2017-03-01,RF4,2,813,22,0
 3,2017-03-01,RF4,other,2850,6,0
