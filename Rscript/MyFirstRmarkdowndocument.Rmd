@@ -52,14 +52,14 @@ ae <- rowid_to_column(ae, "Index")
 glimpse(ae)
 write_csv(ae, here("RefData", "ae_attendances.csv"))
 ```
-## Let's subset my raw data first into type 1 org only data
+# Let's subset my raw data first into type 1 org only data
 ```{r f,message = FALSE, warning = FALSE}
 ae_type1 <- subset(ae,type=='1')
 unique(ae_type1$type)
 unique(ae_type1$org_code)
 ```
 
-## Let's tablulate Type1 hospital data and save for my reference
+## Let's tablulate Type1 hospital data and save for my upcoming works
 ```{r g,message = FALSE, warning = FALSE}
 ae_type1 %>%
   mutate_at(vars(period), format, "%b-%y") %>% 
@@ -82,12 +82,12 @@ Type1_att_descending <-Type1_attendances[order(-Type1_attendances$attendances),]
 glimpse(Type1_att_descending)
 write_csv(Type1_att_descending, here("WorkingData", "Type1_attendances_descending.csv"))
 ```
-## Subsetting new df with top 10 hospitals
+## Subsetting new df with top 5 hospitals
 ```{r j,message = FALSE, warning = FALSE}
-Top5_attendance <- head(Type1_att_ascending,5)
+Top5_attendance <- head(Type1_att_descending,5)
 write_csv(Top5_attendance, here("WorkingData", "Top5_attendance.csv"))
 ```
-### Tabulating Top 5 most admitted hospitals
+### Tabulating Top 5 most visited hospitals
 ```{r k,message = FALSE, warning = FALSE}
 Top5_attendance %>%
   mutate_at(vars(attendances, breaches), comma) %>%
@@ -100,8 +100,8 @@ Top5_visualready$performance <- 1-(Top5_visualready$breaches/Top5_visualready$at
 glimpse(Top5_visualready)
 write_csv(Top5_visualready, here("WorkingData", "Top5_visualready.csv"))
 ```
-### Visualising Top 10 hospital breach percentage by time
-```{r m,message = FALSE, warning = FALSE}
+### Visualising Top 5 hospital breach percentage by time
+```{r m, message=FALSE, warning=FALSE}
 ggplot(Top5_visualready, aes(x=period, y=performance, group=org_code, colour=org_code)) +  
   geom_line (size=0.75) + scale_y_continuous(labels = percent) + 
   scale_x_date(date_labels = "%b-%y", date_breaks = "11 month")+
@@ -114,126 +114,60 @@ ggplot(Top5_visualready, aes(x=period, y=performance, group=org_code, colour=org
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-### Let's tabulate the subsetted ae_attendances data for your report
-```{r v,message = FALSE, warning = FALSE}
-ae %>%
-  # set the period column to show in Month-Year format
-  mutate_at(vars(period), format, "%b-%y") %>% 
-  # set the numeric columns to have a comma at the 1000's place
-  mutate_at(vars(attendances, breaches), comma) %>%
-  # show the first 10 rows
-  head(10) %>%
-  # format as a table
-  kable()
-```
 
-### Let's save provisional subsetted ae_attendances data to the 'RawData' folder
-Of note, when naming folders and files, it is important that you do so in a consistent, logical and predictable way means that information may be located, identified and retrieved by your and your colleagues, as quickly and easily as possible. With this in mind let's name this file "ae_attendances_ENG_4hr_perfom", and write it to the raw data folder.
-```{r w,message = FALSE, warning = FALSE}
-glimpse(ae)
-write_csv(ae, here("RawData", "ae_attendances_ENG_4hr_perfom.csv"))
-```
+# Separating provisionalae_type1 data into training and testing sets
 
-## Separating provisional ae_attendances_ENG_4hr_perfom data into training and testing sets
-To develop and evaluate your data capture tool, you will need to splint the raw data into test and training data sets.
-We have added an index column earlier, so we can link the partitioned data sets to the raw ae_attendances and ae_attendances_ENG_4hr_perfom if required in the future. 
-
-
-### How many rows are in the ae_attendances_ENG_4hr_perfom dataset?
-```{r x,message = FALSE, warning = FALSE}
-#The ae_attendances_ENG_4hr_perfom dataset is large with 
-nrow(ae) #rows of data
-```
-
-We do not want you to spend hours inputting rows and rows of data into your data capture tool. A test data set of 10-15 records to capture with and evaluate your data capture tool is sufficient for the purpose of the course assignment. Here is how to work out the proportion (`prop`) of the raw data to assign to the training data:
-```{r y,message = FALSE, warning = FALSE}
-prop<-(1-(15/nrow(ae)))
-#The proportion of the raw that needs to be assigned to the training data to ensure there is only 10 to 15 records in the test data is: 
+## Indexing to create train and test data
+```{r n,message = FALSE, warning = FALSE}
+nrow(ae_type1) #to confirm number of rows again
+prop<-(1-(15/nrow(ae_type1)))
 print(prop)
-```
-We will use the createDataPartition() function from the *caret* package to splint our raw data into test and training data sets.
-The 'set.seed()' function is a random number generator, which is useful for creating random objects that can be reproduced. This will make sure that every time we run this script, we will partition the raw data into the same test and training data.
-```{r z,message = FALSE, warning = FALSE}
 set.seed(333)
 #Partitioning the raw data into the test and training data.
-trainIndex <- createDataPartition(ae$index, p = prop, 
+trainIndex <- createDataPartition(ae_type1$Index, p = prop, 
                                   list = FALSE, 
                                   times = 1)
 head(trainIndex)
 # All records that are in the trainIndex are assigned to the training data.
-aeTrain <- ae[ trainIndex,]
-nrow(aeTrain)
+ae_type1Train <- ae_type1[ trainIndex,]
+nrow(ae_type1Train)
 ```
 There are 12,753 records in your training data. That is a large dataset!
 
-### Let's tabulate ae_attendances_ENG_4hr_perfom training data for your report
-```{r aa,message = FALSE, warning = FALSE}
-aeTrain %>%
-  # set the period column to show in Month-Year format
+## Creating Training Dataset
+```{r o,message = FALSE, warning = FALSE}
+ae_type1Train %>%
   mutate_at(vars(period), format, "%b-%y") %>% 
-  # set the numeric columns to have a comma at the 1000's place
   mutate_at(vars(attendances, breaches), comma) %>%
-  # show the first 10 rows
   head(10) %>%
-  # format as a table
   kable()
-  ```
-  
-### Our next task, it to save ae_attendances_ENG_4hr_perfom training data to your working data folder 'Data'
-```{r ab,message = FALSE, warning = FALSE}
-write_csv(aeTrain, here("Data", "ae_attendances_ENG_4hr_perfom_train.csv"))
+write_csv(ae_type1Train, here("WorkingData", "ae_type1_train.csv"))
 ```
-
-### Let's extract the ae_attendances_ENG_4hr_perfom test data
-#All records that are not in the trainIndex (`-trainIndex`) are assigned to the test data.
-```{r ac,message = FALSE, warning = FALSE}
-aeTest  <- ae[-trainIndex,]
-nrow(aeTest)
+## Creating Testing Dataset
+```{r p,message = FALSE, warning = FALSE}
+ae_type1_test  <- ae_type1[-trainIndex,]
+nrow(ae_type1_test)
 ```
-There are 12 records in your test data. Perfect! You now need to set aside the first record from the ae_attendances_ENG_4hr_perfom test data so that your markers can test and evaluate your data-capture tool.
-```{r ad,message = FALSE, warning = FALSE}
-aeTestMarker  <- aeTest[1,]
-```
-#### Let's tabulate ae_attendances_ENG_4hr_perfom marker test data for your report
-```{r ae,message = FALSE, warning = FALSE}
-aeTestMarker  %>%
-  # set the period column to show in Month-Year format
+#### Tabulating and saving TestMarker
+```{r q,message = FALSE, warning = FALSE}
+ae_type1TestMarker  <- ae_type1_test[1,]
+ae_type1TestMarker  %>%
   mutate_at(vars(period), format, "%b-%y") %>% 
-  # set the numeric columns to have a comma at the 1000's place
   mutate_at(vars(attendances, breaches), comma) %>%
-  # show the first 10 rows
   head(10) %>%
-  # format as a table
   kable()
+write_csv(ae_type1TestMarker, here("WorkingData", "ae_type1_testmarker.csv"))
 ```
-### Our next task, it to save our ae_attendances_ENG_4hr_perfom marker test data to our working data folder 'Data'
-```{r af,message = FALSE, warning = FALSE}
-write_csv(aeTestMarker, here("Data", "ae_attendances_ENG_4hr_perfom_test_marker.csv"))
-```
-
-### We then need to set aside the remaining records for you to test (or collect with your) your data-capture tool.
-```{r ag,message = FALSE, warning = FALSE}
-aeTest  <- aeTest[2:nrow(aeTest),]
-```
-#### Let's tabulate ae_attendances_ENG_4hr_perfom test data for your report
-```{r ah,message = FALSE, warning = FALSE}
-aeTest  %>%
-  # set the period column to show in Month-Year format
+### Saving remaining test records
+```{r r,message = FALSE, warning = FALSE}
+ae_type1_test  <- ae_type1_test[2:nrow(ae_type1_test),]
+ae_type1_test  %>%
   mutate_at(vars(period), format, "%b-%y") %>% 
-  # set the numeric columns to have a comma at the 1000's place
   mutate_at(vars(attendances, breaches), comma) %>%
-  # show the first 10 rows
   head(10) %>%
-  # format as a table
   kable()
+write_csv(ae_type1_test, here("WorkingData", "ae_type1_test.csv"))
 ```
 
-### Our final task, is to save our ae_attendances_ENG_4hr_perfom test data to our working data folder 'Data'
-```{r ai,message = FALSE, warning = FALSE}
-write_csv(aeTest, here("Data", "ae_attendances_test.csv"))
-```
-
-
-You are now ready to start exploring your data. Happy coding!
 
 
