@@ -3,8 +3,8 @@ title: '**MyFirstRMarkdowndocument**'
 author: "B199291"
 date: "`r format (Sys.time (), '%d %B, %Y')`"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
