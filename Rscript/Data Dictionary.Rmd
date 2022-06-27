@@ -1,8 +1,10 @@
 ---
-title: "**Data Dictionary for Type 1 Hospitals Data Capture Tool**"
+title: '**Data Dictionary for Type 1 Hospitals Data Capture Tool**'
 author: "B199291"
 date: "`r format (Sys.time (), '%d %B, %Y')`"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(eval = FALSE)
@@ -20,12 +22,16 @@ glimpse(CollectedData)
 ```
 ##**Creating Variable Description** 
 ```{r variable_description}
-variable_description <- c("The index column that allows us to link the data collected to the original ae_attendances data in the 'RefData' folder.",
+variable_description <- c("The index column that allows us to link the data 
+collected to the original ae_attendances data in the 'RefData' folder.",
 "The month that this activity relates to, stored as a date (1st of each month).",
-"The Organisation data service (ODS) code for the organisation. If you want to know the organisation associated with a particular ODS code, you can look it up from the following address: https://odsportal.digital.nhs.uk/Organisation/Search.", 
-"The number of attendances for this department type at this organisation for this month.", 
-"The number of attendances that breached the four-hour target.",  
-"The consent from the end-user to process and share the data collected with the data capture tool.")
+"The Organisation data service (ODS) code for the organisation. If you want to 
+know the organisation associated with a particular ODS code, you can look it up 
+from the following address: https://odsportal.digital.nhs.uk/Organisation/Search.", 
+"The number of attendances for this department type at this organisation for 
+this month.","The number of attendances that breached the four-hour target.",  
+"The consent from the end-user to process and share the data collected with 
+the data capture tool.")
 print(variable_description)
 ```
 
@@ -71,20 +77,22 @@ glimpse(dictionary)
 write_csv(dictionary, here("RefData", "CollectedData_Datadictionary.csv"))
 ```
 ## **Append data dictionary to the CollectedData**
-#### **Create main_string for attributes**
+### **Create main_string for attributes**
 ```{r main_string}
-main_string <- "This data describes the NHS England accident and emergency (A&E) attendances and breaches of four-hour wait time target data of Type 1 Hospitals from the *NHSRdatasets* package collected by the data capture tool."
+main_string <- "This data describes the NHS England accident and emergency 
+(A&E) attendances and breaches of four-hour wait time target data of Type 1 
+Hospitals from the *NHSRdatasets* package collected by the data capture tool."
 main_string
 ```
-#### **Incorporate attributes as metada**
+### **Incorporate attributes as metada**
 ```{r complete_dataset}
-complete_CollectedData <- incorporate_attr(my.data = CollectedData, data.dictionary = dictionary,
-main_string = main_string)
+complete_CollectedData <- incorporate_attr(my.data = CollectedData, 
+data.dictionary = dictionary,main_string = main_string)
 attributes(complete_CollectedData)$author[1]<-"B199291"
 complete_CollectedData
 attributes(complete_CollectedData)
 ```
-##### **Save the CollectedData with attributes**
+### **Save the CollectedData with attributes**
 ```{r save_it}
 save_it(complete_CollectedData, here("RefData", "complete_CollectedData"))
 ```
