@@ -6,9 +6,8 @@ output:
   pdf_document: default
   html_document: default
 ---
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
 ```
 #Loading NHSRdatasets and required packages.
 ```{r a,message = FALSE, warning = FALSE}
@@ -24,7 +23,6 @@ library(ggplot2)
 
 #Loading ae_attendances Dataset
 ```{r b,message = FALSE, warning = FALSE}
-#Load the ae_attendances data.
 data(ae_attendances)
 ```
 
