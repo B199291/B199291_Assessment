@@ -6,7 +6,7 @@ output:
   pdf_document: default
   html_document: default
 ---
-[My Github Repo](https://github.com/B199291/B199291_Assessment)
+My GitHub Repo : [Click Here](https://github.com/B199291/B199291_Assessment)
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(eval = FALSE)
 ```
