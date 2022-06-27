@@ -1,0 +1,90 @@
+---
+title: "**Data Dictionary for Type 1 Hospitals Data Capture Tool**"
+author: "B199291"
+date: "`r format (Sys.time (), '%d %B, %Y')`"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# **Load packages for dat dictionary creation**
+```{r load}
+library(dataMeta)
+library (tidyverse)
+library(here)
+```
+Read csv funtion to look collected dataset.
+```{r data}
+CollectedData=read_csv(here("RefData", "CollectedData_final.csv"))
+glimpse(CollectedData) 
+```
+##**Creating Variable Description** 
+```{r variable_description}
+variable_description <- c("The index column that allows us to link the data collected to the original ae_attendances data in the 'RefData' folder.",
+"The month that this activity relates to, stored as a date (1st of each month).",
+"The Organisation data service (ODS) code for the organisation. If you want to know the organisation associated with a particular ODS code, you can look it up from the following address: https://odsportal.digital.nhs.uk/Organisation/Search.", 
+"The number of attendances for this department type at this organisation for this month.", 
+"The number of attendances that breached the four-hour target.",  
+"The consent from the end-user to process and share the data collected with the data capture tool.")
+print(variable_description)
+```
+
+## **Creating Variable types**
+```{r glimpse2}
+glimpse(CollectedData) 
+```
+We have three quantitative values (measured values) variables and three fixed values (allowable values or codes) variables.
+```{r variable_type}
+variable_type <- c(0, 1, 1, 0, 0,1)
+print(variable_type)
+```
+
+###**Building Data Linker for connection between Collected Data and Data Dictionary
+```{r build_linker}
+linker<-build_linker(CollectedData, variable_description, variable_type)
+print(linker)
+```
+
+## **Data dictionary**
+```{r dictionary}
+dictionary <- build_dict(my.data = CollectedData, linker = linker)
+glimpse(dictionary)
+```
+```{r notes}
+dictionary[5,4]<-"NHS Trust - CAMBRIDGE UNIVERSITY HOSPITALS NHS FOUNDATION TRUST"
+dictionary[6,4]<-"NHS Trust - NORFOLK AND NORWICH UNIVERSITY HOSPITALS NHS FOUNDATION TRUST"
+dictionary[7,4]<-"NHS Trust - UNIVERSITY HOSPITALS BIRMINGHAM NHS FOUNDATION TRUST "
+dictionary[8,4]<-"NHS Trust - EAST CHESHIRE NHS TRUST "
+dictionary[9,4]<-"NHS Trust - SALISBURY NHS FOUNDATION TRUST "
+dictionary[10,4]<-"NHS Trust - BIRMINGHAM WOMEN'S AND CHILDREN'S NHS FOUNDATION TRUST "
+dictionary[11,4]<-"NHS Trust - WIRRAL UNIVERSITY TEACHING HOSPITAL NHS FOUNDATION TRUST "
+dictionary[12,4]<-"NHS Trust - LONDON NORTH WEST UNIVERSITY HEALTHCARE NHS TRUST "
+dictionary[13,4]<-"NHS Trust - MEDWAY NHS FOUNDATION TRUST "
+dictionary[14,4]<-"NHS Trust - WESTON AREA HEALTH NHS TRUST"
+dictionary[15,4]<-"NHS Trust - EAST SUFFOLK AND NORTH ESSEX NHS FOUNDATION TRUST "
+```
+ 
+
+### **Let's save the data dictionary for CollectedData to the 'RefData' folder**
+```{r w,message = FALSE, warning = FALSE}
+glimpse(dictionary)
+write_csv(dictionary, here("RefData", "CollectedData_Datadictionary.csv"))
+```
+## **Append data dictionary to the CollectedData**
+#### **Create main_string for attributes**
+```{r main_string}
+main_string <- "This data describes the NHS England accident and emergency (A&E) attendances and breaches of four-hour wait time target data of Type 1 Hospitals from the *NHSRdatasets* package collected by the data capture tool."
+main_string
+```
+#### **Incorporate attributes as metada**
+```{r complete_dataset}
+complete_CollectedData <- incorporate_attr(my.data = CollectedData, data.dictionary = dictionary,
+main_string = main_string)
+attributes(complete_CollectedData)$author[1]<-"B199291"
+complete_CollectedData
+attributes(complete_CollectedData)
+```
+##### **Save the CollectedData with attributes**
+```{r save_it}
+save_it(complete_CollectedData, here("RefData", "complete_CollectedData"))
+```

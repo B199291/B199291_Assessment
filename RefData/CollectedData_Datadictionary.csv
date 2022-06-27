@@ -1,0 +1,26 @@
+variable name,variable description,variable options,notes
+attendances,The number of attendances for this department type at this organisation for this month.,3801 to 12753,
+breaches,The number of attendances that breached the four-hour target.,86 to 3178,
+consent,The consent from the end-user to process and share the data collected with the data capture tool.,TRUE,
+index,The index column that allows us to link the data collected to the original ae_attendances data in the 'RefData' folder.,2826 to 12463,
+org_code,"The Organisation data service (ODS) code for the organisation. If you want to know the organisation associated with a particular ODS code, you can look it up from the following address: https://odsportal.digital.nhs.uk/Organisation/Search.",RGT,NHS Trust - CAMBRIDGE UNIVERSITY HOSPITALS NHS FOUNDATION TRUST
+ , ,RM1,NHS Trust - NORFOLK AND NORWICH UNIVERSITY HOSPITALS NHS FOUNDATION TRUST
+ , ,RRK,NHS Trust - UNIVERSITY HOSPITALS BIRMINGHAM NHS FOUNDATION TRUST 
+ , ,RJN,NHS Trust - EAST CHESHIRE NHS TRUST 
+ , ,RNZ,NHS Trust - SALISBURY NHS FOUNDATION TRUST 
+ , ,RQ3,NHS Trust - BIRMINGHAM WOMEN'S AND CHILDREN'S NHS FOUNDATION TRUST 
+ , ,RBL,NHS Trust - WIRRAL UNIVERSITY TEACHING HOSPITAL NHS FOUNDATION TRUST 
+ , ,R1K,NHS Trust - LONDON NORTH WEST UNIVERSITY HEALTHCARE NHS TRUST 
+ , ,RPA,NHS Trust - MEDWAY NHS FOUNDATION TRUST 
+ , ,RA3,NHS Trust - WESTON AREA HEALTH NHS TRUST
+ , ,RDE,NHS Trust - EAST SUFFOLK AND NORTH ESSEX NHS FOUNDATION TRUST 
+period,"The month that this activity relates to, stored as a date (1st of each month).",16983,
+ , ,16892,
+ , ,17501,
+ , ,17471,
+ , ,17379,
+ , ,17287,
+ , ,17956,
+ , ,17805,
+ , ,17652,
+ , ,17622,
